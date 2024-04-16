@@ -9,7 +9,7 @@ public class BackendDeveloperTests {
     public void testLoadGraphData() {
         BackendInterface backend = new Backend(new GraphPlaceholder());
         try {
-            backend.loadGraphData("src/campus.dot");
+            backend.loadGraphData("campus.dot");
             // assuming no exceptions are thrown, the test passes
             assertTrue(true);
         } catch (IOException e) {
