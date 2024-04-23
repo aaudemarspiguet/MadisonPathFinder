@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+JUNITPATH="/libs/junit5.jar"
+
+if [[ -f ${JUNITPATH} ]]; then
+    cp ${JUNITPATH} ../
+fi
+
+if [[ -d /javafx  ]]; then
+    cp -r /javafx ../
+fi
+
+if [[ ! -f log ]]; then
+	echo
+	echo "Submission Failed Check: no log file found"
+	exit 1
+fi
+
+if [[ ! -f Makefile ]]; then
+	echo
+	echo "Submission Failed Check: no Makefile found"
+	exit 1
+fi
+
+if ! grep -Pq "^\s*runTests\s*:" Makefile ; then
+	echo
+	echo "Submission Failed Check: Makefile does not contain \"runTests\" target"
+	exit 1
+fi
+
+if ! javac --module-path ../javafx/lib/ --add-modules javafx.controls App.java; then
+    echo
+    echo "Submission Failed Check: App.java does not compile"
+    exit 1
+fi
+
+if ! make clean ; then
+    echo
+    echo "Submission Failed Check: \"make clean\" does not succeed"
+    exit 1
+fi
+
+echo
+echo "Submission Passed Basic Scan"
+exit 0
