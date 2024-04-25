@@ -1,15 +1,154 @@
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.testfx.framework.junit5.ApplicationTest;
+
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class BackendDeveloperTests {
+public class BackendDeveloperTests extends ApplicationTest {
+
+    /**
+     * This method launches the JavaFX application to be tested
+     * BeforeEach of the Integration Tests are run.
+     */
+    @BeforeEach
+    public void setup() throws Exception {
+        Frontend.setBackend(new Backend(new GraphPlaceholder()));
+        ApplicationTest.launch(Frontend.class);
+    }
+
+
+    @Test
+    public void IntegrationShortestPathBasic() {
+        // Lookup GUI elements
+        ComboBox startSelector = lookup("#startSelector").query();
+        Button find = lookup("#submitButton").query();
+        ComboBox endSelector = lookup("#endSelector").query();
+        Label path = lookup("#display").query();
+
+        // Select a start location
+        clickOn("#startSelector");
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+
+        // Select an end location
+        clickOn("#endSelector");
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+
+        // Press the submit button
+        clickOn("#submitButton");
+
+        // Check to make sure the correct path is displayed
+        assertEquals("Results List:\n" +
+                "\tUnion South\n" +
+                "\tComputer Sciences and Statistics\n" +
+                "\tAtmospheric, Oceanic and Space Sciences\n" +
+                "\n" +
+                "Results List (With Travel Times): \n" +
+                "\t",path.getText());
+        
+    }
+
+    @Test
+    public void IntegrationShortestPathVia() {
+        // Lookup GUI elements
+        ComboBox startSelector = lookup("#startSelector").query();
+        Button find = lookup("#submitButton").query();
+        ComboBox endSelector = lookup("#endSelector").query();
+        ComboBox includeSelector = lookup("#includeSelector").query();
+        CheckBox useViaBox = lookup("#viaBox").query();
+        Label path = lookup("#display").query();
+
+        // Select a start location
+        clickOn("#startSelector");
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+
+        // Select an end location
+        clickOn("#endSelector");
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+
+        // Select an include via location
+        clickOn("#includeSelector");
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+
+        // Enable the via checkbox
+        clickOn("#viaBox");
+
+        // Click the submit button
+        clickOn("#submitButton");
+
+        // Check to make sure the correct results are displayed
+        assertEquals("Results List:\n" +
+                "\tMemorial Union\n" +
+                "\tScience Hall\n" +
+                "\tRadio Hall\n" +
+                "\n" +
+                "Results List (With Travel Times): \n" +
+                "\t",path.getText());
+    }
+
+    @Test
+    public void IntegrationShortestPathShowWalkingTimes() {
+        // Lookup GUI elements
+        ComboBox startSelector = lookup("#startSelector").query();
+        Button find = lookup("#submitButton").query();
+        ComboBox endSelector = lookup("#endSelector").query();
+        CheckBox travelTimesBox = lookup("#travelTimesBox").query();
+        Label path = lookup("#display").query();
+
+        // Select a start location
+        clickOn("#startSelector");
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+
+        // Select an end location
+        clickOn("#endSelector");
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+
+        // Select the "show travel times" box
+        clickOn("#travelTimesBox");
+
+        // Click the submit button
+        clickOn("#submitButton");
+
+        // Check to makes sure the correct path is displayed
+        assertEquals("Results List:\n" +
+                "\tUnion South\n" +
+                "\tComputer Sciences and Statistics\n" +
+                "\tAtmospheric, Oceanic and Space Sciences\n" +
+                "\n" +
+                "Results List (With Travel Times): \n" +
+                "\tUnion South\n" +
+                "\t-(176.0 seconds)->Computer Sciences and Statistics\n" +
+                "\t-(80.0 seconds)->Atmospheric, Oceanic and Space Sciences\n" +
+                "\tTotal Time: 4.266666666666667 minutes",path.getText());
+    }
+
     @Test
     public void testLoadGraphData() {
         BackendInterface backend = new Backend(new GraphPlaceholder());
         try {
-            backend.loadGraphData("campus.dot");
+            backend.loadGraphData("src/campus.dot");
             // assuming no exceptions are thrown, the test passes
             assertTrue(true);
         } catch (IOException e) {
@@ -21,7 +160,7 @@ public class BackendDeveloperTests {
     public void testGetListOfAllLocations() {
         BackendInterface backend = new Backend(new GraphPlaceholder());
         try {
-            backend.loadGraphData("campus.dot");
+            backend.loadGraphData("src/campus.dot");
             List<String> locations = backend.getListOfAllLocations();
             assertNotNull(locations);
             // assuming there are three locations in the placeholder
