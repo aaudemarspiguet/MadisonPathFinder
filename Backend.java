@@ -28,7 +28,6 @@ public class Backend implements BackendInterface{
             Scanner fileScanner = new Scanner(new File(filename));
             while (fileScanner.hasNextLine()) {
                 String newLine = fileScanner.nextLine().trim();
-
                 if (newLine.startsWith("\"") && newLine.contains("->")) {
 
                     // retrieve weight by:
@@ -46,14 +45,27 @@ public class Backend implements BackendInterface{
                     String source = nodes[0].trim().replaceAll("\"", "");
                     String destination = nodes[1].trim().replaceAll("\"", ""); 
 
-                    // updating list of locations and adding edge to the graph
+                    // updating list of locations and adding node and edge to the graph
+                  
                     if (!locations.contains(source)) {
                         locations.add(source);
-                    } else if (!locations.contains(destination)) {
-                        locations.add(destination);
+                        graph.insertNode(source);
                     }
-                    graph.insertEdge(source, destination, weight);
+                    if (!locations.contains(destination)) {
+                        locations.add(destination);
+                        graph.insertNode(destination);
+                    }
 
+                    /*
+                    if (!graph.containsNode(source)) {
+                        graph.insertNode(source);
+                    }
+
+                    if (!graph.containsNode(destination)) {
+                        graph.insertNode(destination);
+                    }
+                    */
+                    graph.insertEdge(source, destination, weight);
                 }
             }
             fileScanner.close();
