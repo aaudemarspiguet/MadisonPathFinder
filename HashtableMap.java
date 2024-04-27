@@ -82,8 +82,8 @@ public class HashtableMap<KeyType,ValueType> implements MapADT<KeyType, ValueTyp
             return false;
         }
 
-        for (int i = 0; i < table[hash(key)].size(); i++) {
-            if (table[hash(key)].get(i).key.equals(key)){
+        for (int i = 0; i < (table[hash(key)]).size(); i++) {
+            if ((table[hash(key)]).get(i).key.equals(key)){
                 return true;
             }
         }
@@ -128,7 +128,7 @@ public class HashtableMap<KeyType,ValueType> implements MapADT<KeyType, ValueTyp
 
             // iterate through linked list stored at index of key
             for (int i = 0; i < table[hash(key)].size(); i++) {
-                if (table[hash(key)].get(i).key.equals(key)) {
+                if ((table[hash(key)].get(i).key).equals(key)) {
                     size--; // decrement size;
                     return table[hash(key)].remove(i).value;
                 }
@@ -138,6 +138,7 @@ public class HashtableMap<KeyType,ValueType> implements MapADT<KeyType, ValueTyp
         throw new NoSuchElementException(); // default return if key doesn't exist in table
     }
 
+    @SuppressWarnings("unchecked")
     @Override
      /**
      * Removes all key, value pairs from this collection.
@@ -172,7 +173,7 @@ public class HashtableMap<KeyType,ValueType> implements MapADT<KeyType, ValueTyp
      * @return int of where to store key
      */
     private int hash(KeyType key) {
-        return Math.abs(key.hashCode()) % capacity;
+        return (Math.abs(key.hashCode())) % capacity;
 
     }  
 
@@ -185,7 +186,7 @@ public class HashtableMap<KeyType,ValueType> implements MapADT<KeyType, ValueTyp
 
         // instantiate new table with double capacity and update current capacity
         LinkedList<Pair>[] newTable = (LinkedList<Pair>[]) new LinkedList[2 * capacity];
-        capacity = newTable.length;
+        capacity *= 2;
 
         for (int i = 0; i < table.length; i++) {
 
@@ -203,6 +204,7 @@ public class HashtableMap<KeyType,ValueType> implements MapADT<KeyType, ValueTyp
             }
         }
 
+        table = newTable;
     }
 
     // MIDWEEK
@@ -212,8 +214,6 @@ public class HashtableMap<KeyType,ValueType> implements MapADT<KeyType, ValueTyp
     @BeforeEach
     void setUp() {
         hashtable = new HashtableMap<String, Integer>(3); // capacity at 3
-
-
     }
 
     /**
@@ -242,11 +242,13 @@ public class HashtableMap<KeyType,ValueType> implements MapADT<KeyType, ValueTyp
     @Test
     void testContainsKey() {
         hashtable.put("key1", 1);
+        hashtable.put("X01", 2);
 
         assertFalse(hashtable.containsKey("key5"));
         assertTrue(hashtable.containsKey("key1"));
-
-        
+        assertTrue(hashtable.containsKey("X01"));
+        System.out.println("X01".hashCode());
+        System.out.println(hashtable.hash("X01"));
     }
 
     /**
@@ -257,7 +259,7 @@ public class HashtableMap<KeyType,ValueType> implements MapADT<KeyType, ValueTyp
         hashtable.put("key1", 1);
 
         try {
-            int val = hashtable.get("key5");
+            hashtable.get("key5");
             assertFalse(false);
         } catch (NoSuchElementException e) {
             assertTrue(true);
