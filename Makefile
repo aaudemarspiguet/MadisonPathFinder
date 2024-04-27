@@ -8,7 +8,7 @@ runApp: compile
 clean: 
 	rm *.class
 
-runFDTests: FrontendDeveloperTests.java
+runFDTests: compile FrontendDeveloperTests.java
 	javac --module-path ../javafx/lib --add-modules javafx.controls -cp .:../junit5fx.jar FrontendDeveloperTests.java
 	java --module-path ../javafx/lib --add-modules javafx.controls --add-opens javafx.grphics/com.sun.javafx.application=All-UNNAMED -jar ../junit5fx.jar -cp . -c FrontendDeveloperTests
 
