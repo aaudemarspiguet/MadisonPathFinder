@@ -18,7 +18,7 @@ import java.util.List;
  * the shortest distance between two point ins Madison
  */
 public class Frontend extends Application implements FrontendInterface {
-    private static BackendPlaceholder back; // Reference to backend
+    private static BackendInterface back; // Reference to backend
     private ComboBox<String> startSelector; // Dropdown for start location
     private ComboBox<String> endSelector; // Dropdown for end location
     private ComboBox<String> includeSelector; // Dropdown for via location
@@ -30,7 +30,7 @@ public class Frontend extends Application implements FrontendInterface {
      * This method sets the backend for the frontend.
      * @param back the backend to be set
      */
-    public static void setBackend(BackendPlaceholder back) {
+    public static void setBackend(BackendInterface back) {
         Frontend.back = back;
     }
 
