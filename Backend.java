@@ -82,8 +82,7 @@ public class Backend implements BackendInterface {
      * @return list of all location names
      */
     public List<String> getListOfAllLocations() {
-	Collections.sort(locations);
-	return locations;	
+	    return locations;	
     }
 
     @Override
@@ -96,11 +95,11 @@ public class Backend implements BackendInterface {
      *         an empty list if no such path exists
      */
     public List<String> findShortestPath(String startLocation, String endLocation) {
-	try {
-		return graph.shortestPathData(startLocation, endLocation);
-	} catch (NoSuchElementException e) {
-		return new ArrayList<String>();
-	}
+	    try {
+		    return graph.shortestPathData(startLocation, endLocation);
+	    } catch (NoSuchElementException e) {
+		    return new ArrayList<String>();
+	    }
     }
 
     @Override
