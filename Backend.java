@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.io.File;
+import java.util.Collections;
+import java.util.NoSuchElementException;
 
-public class Backend implements BackendInterface{
+public class Backend implements BackendInterface {
     GraphADT<String, Double> graph;
     List<String> locations = new ArrayList<String>();
 
@@ -80,8 +82,8 @@ public class Backend implements BackendInterface{
      * @return list of all location names
      */
     public List<String> getListOfAllLocations() {
-        return locations;
-            
+	Collections.sort(locations);
+	return locations;	
     }
 
     @Override
@@ -94,7 +96,11 @@ public class Backend implements BackendInterface{
      *         an empty list if no such path exists
      */
     public List<String> findShortestPath(String startLocation, String endLocation) {
-        return graph.shortestPathData(startLocation, endLocation);
+	try {
+		return graph.shortestPathData(startLocation, endLocation);
+	} catch (NoSuchElementException e) {
+		return new ArrayList<String>();
+	}
     }
 
     @Override
