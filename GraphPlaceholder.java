@@ -40,15 +40,18 @@ public class GraphPlaceholder implements GraphADT<String, Double> {
   public boolean containsEdge(String pred, String succ) {
     return (pred.equals("Union South") && succ.equals("Computer Sciences and Statistics"))
         || (pred.equals("Computer Sciences and Statistics")
-            && pred.equals("Atmospheric, Oceanic and Space Sciences"));
+            && succ.equals("Atmospheric, Oceanic and Space Sciences"));
   }
 
   public Double getEdge(String pred, String succ) {
     if (pred.equals("Union South") && succ.equals("Computer Sciences and Statistics")) {
       return 176.0;
     } else if (pred.equals("Computer Sciences and Statistics")
-        && pred.equals("Atmospheric, Oceanic and Space Sciences")) {
+        && succ.equals("Atmospheric, Oceanic and Space Sciences")) {
       return 127.2;
+    } else if (pred.equals("Computer Sciences and Statistics") 
+        && succ.equals("Union South")) {
+      return 146.0;
     } else {
       throw new NoSuchElementException();
     }
