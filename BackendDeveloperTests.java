@@ -32,7 +32,7 @@ public class BackendDeveloperTests extends ApplicationTest {
     @BeforeEach
     public void setup() throws Exception {
         Backend backend = new Backend(new DijkstraGraph<String, Double>());
-        backend.loadGraphData("campus.dot");
+        backend.loadGraphData("src/campus.dot");
         Frontend.setBackend(backend);
         ApplicationTest.launch(Frontend.class);
     }
@@ -78,10 +78,7 @@ public class BackendDeveloperTests extends ApplicationTest {
 		"\tNorth Hall",
 		"\tCarillon Tower",
         "\tVan Hise Hall",
-        "\tRobert M. Lafollette School of Public Affairs",
-        "",
-        "Results List (With Travel Times): ",
-        "\t"
+        "\tRobert M. Lafollette School of Public Affairs"
 	    }), Arrays.toString(path.getText().split("\n")));
     }
 
@@ -124,22 +121,13 @@ public class BackendDeveloperTests extends ApplicationTest {
         assertEquals(Arrays.toString(new String[]{
             "Results List:",
             "\tScience Hall",
-            "\tRadio Hall",
-            "\tEducation Building",
-            "\tNorth Hall",
-            "\tCarillon Tower",
-            "\tVan Hise Hall",
-            "\tRobert M. Lafollette School of Public Affairs",
-            "",
-            "Results List (With Travel Times): ",
-            "\tScience Hall",
-            "\t-(108.80000000000001 seconds)->Radio Hall",
-            "\t-(113.0 seconds)->Education Building",
-            "\t-(99.19999999999999 seconds)->North Hall",
-            "\t-(243.5 seconds)->Carillon Tower",
-            "\t-(171.89999999999998 seconds)->Van Hise Hall",
-            "\t-(92.60000000000001 seconds)->Robert M. Lafollette School of Public Affairs",
-            "\tTotal Time: 13.816666666666666 minutes"
+            "\t-> Radio Hall (108.8 seconds)",
+            "\t-> Education Building (113.0 seconds)",
+            "\t-> North Hall (99.2 seconds)",
+            "\t-> Carillon Tower (243.5 seconds)",
+            "\t-> Van Hise Hall (171.9 seconds)",
+            "\t-> Robert M. Lafollette School of Public Affairs (92.6 seconds)",
+            "\tTotal Time: 13.82 minutes"
             }), Arrays.toString(path.getText().split("\n")));
     }
 
@@ -193,9 +181,6 @@ public class BackendDeveloperTests extends ApplicationTest {
 		"\tAtmospheric, Oceanic and Space Sciences",
 		"\tUnion South",
 		"\tWendt Commons",
-        "",
-        "Results List (With Travel Times): ",
-        "\t"
 	    }), Arrays.toString(path.getText().split("\n")));
 
     }
@@ -204,7 +189,7 @@ public class BackendDeveloperTests extends ApplicationTest {
     public void testLoadGraphData() {
         BackendInterface backend = new Backend(new GraphPlaceholder());
         try {
-            backend.loadGraphData("campus.dot");
+            backend.loadGraphData("src/campus.dot");
             System.out.println(backend.getListOfAllLocations().size());
             // assuming no exceptions are thrown, the test passes
             assertTrue(true);
@@ -217,7 +202,7 @@ public class BackendDeveloperTests extends ApplicationTest {
     public void testGetListOfAllLocations() {
         BackendInterface backend = new Backend(new GraphPlaceholder());
         try {
-            backend.loadGraphData("campus.dot");
+            backend.loadGraphData("src/campus.dot");
             List<String> locations = backend.getListOfAllLocations();
             assertNotNull(locations);
             // assuming there are three locations in the placeholder
