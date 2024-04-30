@@ -3,11 +3,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
 import javafx.scene.control.ComboBox;
@@ -18,7 +15,7 @@ import java.util.List;
  * the shortest distance between two point ins Madison
  */
 public class Frontend extends Application implements FrontendInterface {
-    private static BackendPlaceholder back; // Reference to backend
+    private static BackendInterface back; // Reference to backend
     private ComboBox<String> startSelector; // Dropdown for start location
     private ComboBox<String> endSelector; // Dropdown for end location
     private ComboBox<String> includeSelector; // Dropdown for via location
@@ -30,7 +27,7 @@ public class Frontend extends Application implements FrontendInterface {
      * This method sets the backend for the frontend.
      * @param back the backend to be set
      */
-    public static void setBackend(BackendPlaceholder back) {
+    public static void setBackend(BackendInterface back) {
         Frontend.back = back;
     }
 
@@ -72,40 +69,35 @@ public class Frontend extends Application implements FrontendInterface {
      */
     public void createShortestPathControls(Pane parent) {
         // Create start selector and start label
+        BorderPane borderPane = new BorderPane();
         Label startText = new Label("Path Start:");
+        VBox vBox = new VBox();
+        HBox firstLine = new HBox(10);
+        firstLine.setPadding(new Insets(15, 20, 5, 25));
         startSelector = new ComboBox<>();
+        firstLine.getChildren().addAll(startText, startSelector);
         List<String> startLocations = back.getListOfAllLocations();
         startSelector.getItems().addAll(startLocations);
         startSelector.setId("startSelector");
-        // Set layout for start selector and start label
-        startText.setLayoutX(16);
-        startText.setLayoutY(18);
-        startSelector.setLayoutX(79);
-        startSelector.setLayoutY(16);
-        // Add start selector and start label to parent pane
-        parent.getChildren().add(startText);
-        parent.getChildren().add(startSelector);
         // Create end selector and end label
+        HBox secondLine = new HBox(10);
         Label endText = new Label("Path End:");
         endSelector = new ComboBox<>();
         List<String> endLocations = Frontend.back.getListOfAllLocations();
         endSelector.getItems().addAll(endLocations);
         endSelector.setId("endSelector");
-        // Set layout for end selector and end label
-        endText.setLayoutX(16);
-        endText.setLayoutY(50);
-        endSelector.setLayoutX(79);
-        endSelector.setLayoutY(48);
+        secondLine.getChildren().addAll(endText, endSelector);
+        secondLine.setPadding(new Insets(5, 20, 5, 29));
         // Add end selector and end label to parent pane
-        parent.getChildren().add(endText);
-        parent.getChildren().add(endSelector);
+        //parent.setTop(endText);
         // Create find button
+        HBox thirdLine = new HBox(10);
+        thirdLine.setPadding(new Insets(5, 20, 5, 91));
         Button find = new Button("Submit/Find Button");
         find.setId("submitButton");
         find.setOnAction(e -> {
             // Create string builders for the path display
             StringBuilder shortestPathResults = new StringBuilder("Results List:");
-            StringBuilder shortestPathSeconds = new StringBuilder("\n\nResults List (With Travel Times): \n\t");
             // Create list to keep track of travel times
             List<Double> travelTimes = null;
             Double totalTime = 0.0;
@@ -122,25 +114,37 @@ public class Frontend extends Application implements FrontendInterface {
                     }
                     // Builds the display for the shortest path with travel times
                     for (int i = 0; i < viaShortestPath.size(); i++)  {
-                        shortestPathResults.append("\n\t");
-                        shortestPathResults.append(viaShortestPath.get(i));
-                        if(includeTravelTimes) {
-                            shortestPathSeconds.append(viaShortestPath.get(i));
-                            if(i < viaShortestPath.size() - 1 && includeTravelTimes) {
-                                shortestPathSeconds.append("\n\t-(");
-                                shortestPathSeconds.append(travelTimes.get(i).toString());
-                                shortestPathSeconds.append(" seconds)->");
+                        if(!includeTravelTimes) {
+                            shortestPathResults.append("\n\t");
+                            shortestPathResults.append(viaShortestPath.get(i));
+                        } else {
+                            if(i == 0) {
+                                shortestPathResults.append("\n\t");
+                                shortestPathResults.append(viaShortestPath.get(i));
+                            }
+                            if(i < viaShortestPath.size() -1) {
+                                shortestPathResults.append("\n\t-> ");
+                                shortestPathResults.append(viaShortestPath.get(i + 1));
+                                shortestPathResults.append(" (");
+                                double rounded = travelTimes.get(i);
+                                rounded = (double) (Math.round(rounded*100));
+                                rounded = rounded/100;
+                                shortestPathResults.append(rounded);
+                                shortestPathResults.append(" seconds)");
                             }
                         }
                     }
                     // Calculates the total travel time
                     if(includeTravelTimes) {
-                        for (Double times : travelTimes) {
+                        for (double times : travelTimes) {
                             totalTime += times;
                         }
-                        shortestPathSeconds.append("\n\tTotal Time: ");
-                        shortestPathSeconds.append(totalTime/60);
-                        shortestPathSeconds.append(" minutes");
+                        double rounded = totalTime/60;
+                        rounded = (double) (Math.round(rounded*100));
+                        rounded = rounded/100;
+                        shortestPathResults.append("\n\tTotal Time: ");
+                        shortestPathResults.append(rounded);
+                        shortestPathResults.append(" minutes");
                     }
                     // If no locations are returned, display that no paths were found
                     if(viaShortestPath.isEmpty()) {
@@ -154,40 +158,50 @@ public class Frontend extends Application implements FrontendInterface {
                     }
                     // Builds the display for the shortest path (without travel times)
                     for (int i = 0; i < shortestPath.size(); i++)  {
-                        shortestPathResults.append("\n\t");
-                        shortestPathResults.append(shortestPath.get(i));
-                        if(includeTravelTimes) {
-                            shortestPathSeconds.append(shortestPath.get(i));
-                            if(i < shortestPath.size() - 1 && includeTravelTimes) {
-                                shortestPathSeconds.append("\n\t-(");
-                                shortestPathSeconds.append(travelTimes.get(i).toString());
-                                shortestPathSeconds.append(" seconds)->");
+                        if(!includeTravelTimes) {
+                            shortestPathResults.append("\n\t");
+                            shortestPathResults.append(shortestPath.get(i));
+                        } else {
+                            if(i == 0) {
+                                shortestPathResults.append("\n\t");
+                                shortestPathResults.append(shortestPath.get(i));
+                            }
+                            if(i < shortestPath.size() -1) {
+                                shortestPathResults.append("\n\t-> ");
+                                shortestPathResults.append(shortestPath.get(i + 1));
+                                shortestPathResults.append(" (");
+                                double rounded = travelTimes.get(i);
+                                rounded = (double) (Math.round(rounded*100));
+                                rounded = rounded/100;
+                                shortestPathResults.append(rounded);
+                                shortestPathResults.append(" seconds)");
                             }
                         }
                     }
                     // Calculates the total travel times
                     if(includeTravelTimes) {
-                        for (Double times : travelTimes) {
+                        for (double times : travelTimes) {
                             totalTime += times;
                         }
-                        shortestPathSeconds.append("\n\tTotal Time: ");
-                        shortestPathSeconds.append(totalTime/60);
-                        shortestPathSeconds.append(" minutes");
+                        double rounded = totalTime/60;
+                        rounded = (double) (Math.round(rounded*100));
+                        rounded = rounded/100;
+                        shortestPathResults.append("\n\tTotal Time: ");
+                        shortestPathResults.append(rounded);
+                        shortestPathResults.append(" minutes");
                     }
                     // If no locations are returned, display that no paths were found
                     if(shortestPath.isEmpty()) {
                         shortestPathResults.append("\n\n No Paths Found");
                     }
                 }
-                shortestPathResults.append(shortestPathSeconds);
                 path.setText(shortestPathResults.toString());
             }
         });
-        // Set layout for the submit button
-        find.setLayoutX(79);
-        find.setLayoutY(80);
-        // Add submit button to parent pane
-        parent.getChildren().add(find);
+        thirdLine.getChildren().add(find);
+        vBox.getChildren().addAll(firstLine, secondLine, thirdLine);
+        borderPane.setTop(vBox);
+        parent.getChildren().add(borderPane);
     }
 
     /**
@@ -196,12 +210,12 @@ public class Frontend extends Application implements FrontendInterface {
      */
     public void createPathListDisplay(Pane parent) {
         // Create a label to display the shortest path
-        path = new Label("Results List: \n\n\n\n Results List(With Travel Times):");
+        path = new Label("Results List:");
         // Set a layout for the path label
         path.setLayoutX(16);
-        path.setLayoutY(112);
+        path.setLayoutY(165);
         path.setId("display");
-        // A the path label to the parent pane
+        // Add the path label to the parent pane
         parent.getChildren().add(path);
     }
 
@@ -234,7 +248,7 @@ public class Frontend extends Application implements FrontendInterface {
         travelTimesBox.setId("travelTimesBox");
         // Sets layout for the checkbox
         travelTimesBox.setLayoutX(220);
-        travelTimesBox.setLayoutY(80);
+        travelTimesBox.setLayoutY(92);
         // Adds the checkbox to the parent pane
         parent.getChildren().add(travelTimesBox);
     }
@@ -245,21 +259,21 @@ public class Frontend extends Application implements FrontendInterface {
      */
     public void createOptionalLocationControls(Pane parent) {
         // Creates the label and selector for including a via location
-        Label includeText = new Label("Via Location (optional):");
+        Label includeText = new Label("Via Location \n  (optional):");
         includeSelector = new ComboBox();
         List<String> includeLocations = Frontend.back.getListOfAllLocations();
         includeSelector.getItems().addAll(includeLocations);
         includeSelector.setId("includeSelector");
         // Sets the layout for the "include via location" label and selector
-        includeSelector.setLayoutX(500);
-        includeSelector.setLayoutY(16);
-        includeText.setLayoutX(368);
-        includeText.setLayoutY(18);
+        includeSelector.setLayoutX(90);
+        includeSelector.setLayoutY(120);
+        includeText.setLayoutX(15);
+        includeText.setLayoutY(120);
         // Adds the "include via location" label and selector to the parent pane
         parent.getChildren().add(includeText);
         parent.getChildren().add(includeSelector);
         // Creates a new checkbox to toggle using a via location in the path
-        CheckBox useViaBox = new CheckBox("Use Above Location in Path");
+        CheckBox useViaBox = new CheckBox("Use Location in Path");
         useViaBox.setId("viaBox");
         // Toggle global variable for including via location when clicked
         useViaBox.setOnAction(e -> {
@@ -270,8 +284,8 @@ public class Frontend extends Application implements FrontendInterface {
             }
         });
         // Set layout of the via location checkbox
-        useViaBox.setLayoutX(500);
-        useViaBox.setLayoutY(48);
+        useViaBox.setLayoutX(450);
+        useViaBox.setLayoutY(124);
 
         // Add via location checkbox to parent pane
         parent.getChildren().add(useViaBox);
@@ -286,7 +300,7 @@ public class Frontend extends Application implements FrontendInterface {
         Button about = new Button("About");
         about.setId("aboutButton");
         // Sets layout of the about button
-        about.setLayoutX(32);
+        about.setLayoutX(670);
         about.setLayoutY(560);
         about.setOnAction(e -> {
             // Create a new stage for the about information
@@ -328,7 +342,7 @@ public class Frontend extends Application implements FrontendInterface {
         Button quit = new Button("Quit");
         quit.setOnAction(e ->System.exit(0));
         // Sets layout of the quit button
-        quit.setLayoutX(96);
+        quit.setLayoutX(730);
         quit.setLayoutY(560);
         // Add the quit button to the parent pane
         parent.getChildren().add(quit);
