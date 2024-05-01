@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.io.File;
+import java.util.Collections;
+import java.util.NoSuchElementException;
 
-public class Backend implements BackendInterface{
+public class Backend implements BackendInterface {
     GraphADT<String, Double> graph;
     List<String> locations = new ArrayList<String>();
 
@@ -28,7 +30,6 @@ public class Backend implements BackendInterface{
             Scanner fileScanner = new Scanner(new File(filename));
             while (fileScanner.hasNextLine()) {
                 String newLine = fileScanner.nextLine().trim();
-
                 if (newLine.startsWith("\"") && newLine.contains("->")) {
 
                     // retrieve weight by:
@@ -46,14 +47,27 @@ public class Backend implements BackendInterface{
                     String source = nodes[0].trim().replaceAll("\"", "");
                     String destination = nodes[1].trim().replaceAll("\"", ""); 
 
-                    // updating list of locations and adding edge to the graph
+                    // updating list of locations and adding node and edge to the graph
+                  
                     if (!locations.contains(source)) {
                         locations.add(source);
-                    } else if (!locations.contains(destination)) {
-                        locations.add(destination);
+                        graph.insertNode(source);
                     }
-                    graph.insertEdge(source, destination, weight);
+                    if (!locations.contains(destination)) {
+                        locations.add(destination);
+                        graph.insertNode(destination);
+                    }
 
+                    /*
+                    if (!graph.containsNode(source)) {
+                        graph.insertNode(source);
+                    }
+
+                    if (!graph.containsNode(destination)) {
+                        graph.insertNode(destination);
+                    }
+                    */
+                    graph.insertEdge(source, destination, weight);
                 }
             }
             fileScanner.close();
@@ -68,8 +82,7 @@ public class Backend implements BackendInterface{
      * @return list of all location names
      */
     public List<String> getListOfAllLocations() {
-        return locations;
-            
+	    return locations;	
     }
 
     @Override
@@ -82,7 +95,11 @@ public class Backend implements BackendInterface{
      *         an empty list if no such path exists
      */
     public List<String> findShortestPath(String startLocation, String endLocation) {
-        return graph.shortestPathData(startLocation, endLocation);
+	    try {
+		    return graph.shortestPathData(startLocation, endLocation);
+	    } catch (NoSuchElementException e) {
+		    return new ArrayList<String>();
+	    }
     }
 
     @Override
