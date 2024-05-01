@@ -15,6 +15,9 @@ import javafx.scene.input.KeyCode;
 import org.testfx.util.WaitForAsyncUtils;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class tests the Frontend and integration for P213
+ */
 public class FrontendDeveloperTests extends ApplicationTest {
     /**
      * This test chooses a start location and an end location then
@@ -50,10 +53,7 @@ public class FrontendDeveloperTests extends ApplicationTest {
         assertEquals("Results List:\n" +
                 "\tUnion South\n" +
                 "\tComputer Sciences and Statistics\n" +
-                "\tAtmospheric, Oceanic and Space Sciences\n" +
-                "\n" +
-                "Results List (With Travel Times): \n" +
-                "\t", path.getText());
+                "\tAtmospheric, Oceanic and Space Sciences", path.getText());
     }
 
     /**
@@ -101,10 +101,7 @@ public class FrontendDeveloperTests extends ApplicationTest {
         assertEquals("Results List:\n" +
                 "\tMemorial Union\n" +
                 "\tScience Hall\n" +
-                "\tRadio Hall\n" +
-                "\n" +
-                "Results List (With Travel Times): \n" +
-                "\t", path.getText());
+                "\tRadio Hall", path.getText());
     }
 
     /**
@@ -144,14 +141,9 @@ public class FrontendDeveloperTests extends ApplicationTest {
         // Check to makes sure the correct path is displayed
         assertEquals("Results List:\n" +
                 "\tUnion South\n" +
-                "\tComputer Sciences and Statistics\n" +
-                "\tAtmospheric, Oceanic and Space Sciences\n" +
-                "\n" +
-                "Results List (With Travel Times): \n" +
-                "\tUnion South\n" +
-                "\t-(176.0 seconds)->Computer Sciences and Statistics\n" +
-                "\t-(80.0 seconds)->Atmospheric, Oceanic and Space Sciences\n" +
-                "\tTotal Time: 4.266666666666667 minutes", path.getText());
+                "\t-> Computer Sciences and Statistics (176.0 seconds)\n" +
+                "\t-> Atmospheric, Oceanic and Space Sciences (80.0 seconds)\n" +
+                "\tTotal Time: 4.27 minutes", path.getText());
     }
 
     /**
@@ -194,13 +186,15 @@ public class FrontendDeveloperTests extends ApplicationTest {
 
 
     /**
-     * This test initiates the frontend with the backend and tests the 
+     * This test initiates the frontend with the backend and tests the
      * findShortestPath() method from the backend.
      */
         @Test
-        public void testBackendShortestPath() throws Exception {
+        public void testIntegrationShortestPath() throws Exception {
             // Set backend and launch application
-            Frontend.setBackend(new Backend(new DijkstraGraph<String, Double>()));
+            Backend backend = new Backend(new DijkstraGraph<String, Double>());
+            Frontend.setBackend(backend);
+            backend.loadGraphData("src/main/java/campus.dot");
             ApplicationTest.launch(Frontend.class);
             // Lookup GUI elements
             ComboBox startSelector = lookup("#startSelector").query();
@@ -211,10 +205,15 @@ public class FrontendDeveloperTests extends ApplicationTest {
             // Select a start location
             clickOn("#startSelector");
             press(KeyCode.DOWN).release(KeyCode.DOWN);
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
             press(KeyCode.ENTER).release(KeyCode.ENTER);
 
             // Select an end location
             clickOn("#endSelector");
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
             press(KeyCode.DOWN).release(KeyCode.DOWN);
             press(KeyCode.DOWN).release(KeyCode.DOWN);
             press(KeyCode.DOWN).release(KeyCode.DOWN);
@@ -225,22 +224,21 @@ public class FrontendDeveloperTests extends ApplicationTest {
 
             // Check to make sure the correct path is displayed
             assertEquals("Results List:\n" +
-                    "\tUnion South\n" +
-                    "\tComputer Sciences and Statistics\n" +
-                    "\tAtmospheric, Oceanic and Space Sciences\n" +
-                    "\n" +
-                    "Results List (With Travel Times): \n" +
-                    "\t",path.getText());
+                    "\tBrat Stand\n" +
+                    "\tScience Hall\n" +
+                    "\tWisconsin State Historical Society",path.getText());
         }
 
     /**
-     * This test initiates the frontend with the backend and tests the 
+     * This test initiates the frontend with the backend and tests the
      * getTravelTimesOnPath() method from the backend.
      */
     @Test
-    public void testBackendShowTimes() throws Exception {
+    public void testIntegrationShowTimes() throws Exception {
         // Set backend and launch application
-        Frontend.setBackend(new Backend(new DijkstraGraph<String, Double>()));
+        Backend backend = new Backend(new DijkstraGraph<String, Double>());
+        Frontend.setBackend(backend);
+        backend.loadGraphData("src/main/java/campus.dot");
         ApplicationTest.launch(Frontend.class);
         // Lookup GUI elements
         ComboBox startSelector = lookup("#startSelector").query();
@@ -256,10 +254,11 @@ public class FrontendDeveloperTests extends ApplicationTest {
 
         // Select an end location
         clickOn("#endSelector");
-        press(KeyCode.DOWN).release(KeyCode.DOWN);
-        press(KeyCode.DOWN).release(KeyCode.DOWN);
-        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        for(int i = 0; i < 12; i++) {
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
+        }
         press(KeyCode.ENTER).release(KeyCode.ENTER);
+
 
         // Select the "show travel times" box
         clickOn("#travelTimesBox");
@@ -269,18 +268,21 @@ public class FrontendDeveloperTests extends ApplicationTest {
 
         // Check to makes sure the correct path is displayed
         assertEquals("Results List:\n" +
-                "\tUnion South\n" +
-                "\tComputer Sciences and Statistics\n" +
-                "\tAtmospheric, Oceanic and Space Sciences\n" +
-                "\n" +
-                "Results List (With Travel Times): \n" +
-                "\tUnion South\n" +
-                "\t-(176.0 seconds)->Computer Sciences and Statistics\n" +
-                "\t-(80.0 seconds)->Atmospheric, Oceanic and Space Sciences\n" +
-                "\tTotal Time: 4.266666666666667 minutes", path.getText());
+                "\tMemorial Union\n" +
+                "\t-> Radio Hall (176.7 seconds)\n" +
+                "\t-> Education Building (113.0 seconds)\n" +
+                "\t-> South Hall (187.6 seconds)\n" +
+                "\t-> Law Building (112.8 seconds)\n" +
+                "\t-> X01 (174.7 seconds)\n" +
+                "\t-> Luther Memorial Church (65.5 seconds)\n" +
+                "\t-> Noland Hall (183.5 seconds)\n" +
+                "\t-> Meiklejohn House (124.2 seconds)\n" +
+                "\t-> Computer Sciences and Statistics (164.2 seconds)\n" +
+                "\t-> Atmospheric, Oceanic and Space Sciences (127.2 seconds)\n" +
+                "\tTotal Time: 23.82 minutes", path.getText());
     }
-        
-        
+
+
 }
 
 
