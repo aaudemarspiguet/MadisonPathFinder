@@ -7,7 +7,7 @@ FrontendDeveloperTests.class: FrontendDeveloperTests.java
 BackendDeveloperTests.class: BackendDeveloperTests.java
 	javac --module-path ../javafx/lib --add-modules javafx.controls -cp .:../junit5fx.jar BackendDeveloperTests.java
 
-runBDTests: BackendDeveloperTests.java
+runBDTests: BackendDeveloperTests.class
 	java --module-path ../javafx/lib --add-modules javafx.controls --add-opens javafx.graphics/com.sun.javafx.application=All-UNNAMED -jar ../junit5fx.jar -cp . -c BackendDeveloperTests
 
 clean:
@@ -18,3 +18,6 @@ compile: Backend.java Frontend.java App.java DijkstraGraph.class
 
 DijkstraGraph.class: DijkstraGraph.java
 	javac -cp .:../junit5.jar DijkstraGraph.java
+
+runApp: compile
+	java --module-path ../javafx/lib --add-modules javafx.controls --add-opens javafx.graphics/com.sun.javafx.application=All-UNNAMED App

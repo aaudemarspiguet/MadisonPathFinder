@@ -247,8 +247,8 @@ public class Frontend extends Application implements FrontendInterface {
         });
         travelTimesBox.setId("travelTimesBox");
         // Sets layout for the checkbox
-        travelTimesBox.setLayoutX(220);
-        travelTimesBox.setLayoutY(92);
+        travelTimesBox.setLayoutX(240);
+        travelTimesBox.setLayoutY(85);
         // Adds the checkbox to the parent pane
         parent.getChildren().add(travelTimesBox);
     }
@@ -265,7 +265,7 @@ public class Frontend extends Application implements FrontendInterface {
         includeSelector.getItems().addAll(includeLocations);
         includeSelector.setId("includeSelector");
         // Sets the layout for the "include via location" label and selector
-        includeSelector.setLayoutX(90);
+        includeSelector.setLayoutX(98);
         includeSelector.setLayoutY(120);
         includeText.setLayoutX(15);
         includeText.setLayoutY(120);
@@ -284,8 +284,8 @@ public class Frontend extends Application implements FrontendInterface {
             }
         });
         // Set layout of the via location checkbox
-        useViaBox.setLayoutX(450);
-        useViaBox.setLayoutY(124);
+        useViaBox.setLayoutX(525);
+        useViaBox.setLayoutY(122);
 
         // Add via location checkbox to parent pane
         parent.getChildren().add(useViaBox);
