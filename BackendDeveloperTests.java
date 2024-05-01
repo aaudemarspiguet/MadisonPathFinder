@@ -263,4 +263,28 @@ public class BackendDeveloperTests extends ApplicationTest {
         assertEquals(Double.valueOf(176.0), travelTimes.get(2));
         assertEquals(Double.valueOf(127.2), travelTimes.get(3));
     }
+
+    // Test case if createAllControls method creates all necessary GUI controls
+    @Test
+    public void testPartnerCreateAllControls() {
+        Pane parent = new Pane();
+        Frontend frontend = new Frontend();
+        assertTrue(parent.getChildren().size() == 0, "Returned non-zero # of controls!");
+        frontend.createAllControls(parent);
+        assertTrue(parent.getChildren().size() > 0, "Controls are not created!");
+    }
+
+    // Test case to simulate the scenario where one start location selected but no end locations are selected
+    public void testPartnerNoLocationsSelected() {
+        //  select start
+        clickOn("#startSelector");
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+
+        Label path = lookup("#display").query();
+        // Simulate clicking the submit button
+        clickOn("#submitButton");
+        // Assert that the correct message is displayed
+        assertEquals("Results List:", path.getText());
+    }
 }
