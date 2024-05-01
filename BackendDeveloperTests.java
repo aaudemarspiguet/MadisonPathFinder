@@ -32,7 +32,7 @@ public class BackendDeveloperTests extends ApplicationTest {
     @BeforeEach
     public void setup() throws Exception {
         Backend backend = new Backend(new DijkstraGraph<String, Double>());
-        backend.loadGraphData("src/campus.dot");
+        backend.loadGraphData("campus.dot");
         Frontend.setBackend(backend);
         ApplicationTest.launch(Frontend.class);
     }
@@ -189,7 +189,7 @@ public class BackendDeveloperTests extends ApplicationTest {
     public void testLoadGraphData() {
         BackendInterface backend = new Backend(new GraphPlaceholder());
         try {
-            backend.loadGraphData("src/campus.dot");
+            backend.loadGraphData("campus.dot");
             System.out.println(backend.getListOfAllLocations().size());
             // assuming no exceptions are thrown, the test passes
             assertTrue(true);
@@ -202,7 +202,7 @@ public class BackendDeveloperTests extends ApplicationTest {
     public void testGetListOfAllLocations() {
         BackendInterface backend = new Backend(new GraphPlaceholder());
         try {
-            backend.loadGraphData("src/campus.dot");
+            backend.loadGraphData("campus.dot");
             List<String> locations = backend.getListOfAllLocations();
             assertNotNull(locations);
             // assuming there are three locations in the placeholder
