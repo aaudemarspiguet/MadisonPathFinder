@@ -9,7 +9,7 @@ public class App {
     Frontend.setBackend(backend);
 
     try {
-      backend.loadGraphData("src/campus.dot");
+      backend.loadGraphData("campus.dot");
       Application.launch(Frontend.class, args);
     } catch (IOException e) {
       System.out.println(e.getMessage());

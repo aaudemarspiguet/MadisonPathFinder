@@ -194,7 +194,7 @@ public class FrontendDeveloperTests extends ApplicationTest {
             // Set backend and launch application
             Backend backend = new Backend(new DijkstraGraph<String, Double>());
             Frontend.setBackend(backend);
-            backend.loadGraphData("src/main/java/campus.dot");
+            backend.loadGraphData("campus.dot");
             ApplicationTest.launch(Frontend.class);
             // Lookup GUI elements
             ComboBox startSelector = lookup("#startSelector").query();
@@ -238,7 +238,7 @@ public class FrontendDeveloperTests extends ApplicationTest {
         // Set backend and launch application
         Backend backend = new Backend(new DijkstraGraph<String, Double>());
         Frontend.setBackend(backend);
-        backend.loadGraphData("src/main/java/campus.dot");
+        backend.loadGraphData("campus.dot");
         ApplicationTest.launch(Frontend.class);
         // Lookup GUI elements
         ComboBox startSelector = lookup("#startSelector").query();
